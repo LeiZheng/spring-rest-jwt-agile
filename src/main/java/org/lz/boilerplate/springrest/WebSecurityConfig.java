@@ -8,27 +8,24 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private PasswordEncoder bCryptPasswordEncoder;
+    private UserDetailsService userDetailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                // the {noop} means no password encoder.
-                .passwordEncoder(bCryptPasswordEncoder)
-                .withUser("admin").password(bCryptPasswordEncoder.encode("password")).roles("ADMIN").and()
-                .withUser("user").password(bCryptPasswordEncoder.encode("password")).roles("USER");
-    }
+        auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder);
+     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -51,5 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
 }

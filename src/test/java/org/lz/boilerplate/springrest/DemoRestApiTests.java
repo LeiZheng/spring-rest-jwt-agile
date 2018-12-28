@@ -66,6 +66,53 @@ public class DemoRestApiTests {
 
     }
 
+    @Test
+    public void callHelooWithOAuth() {
+        OAuth2RestTemplate template = restTemplate();
+
+         ResponseEntity<String> resp = template
+                .exchange(covertToAbsulateUri(API_DEMO_HELLO), HttpMethod.GET, getOAuthFormData(), String.class );
+        Assert.assertEquals(HttpStatus.OK, resp.getStatusCode());
+        Assert.assertEquals(HELLO_API_EXPECTED, resp.getBody());
+    }
+
+    private String covertToAbsulateUri(String apiDemoHello) {
+        return "http://localhost:" + randomPort + apiDemoHello;
+    }
+
+    private HttpEntity<MultiValueMap<String, String>> getOAuthFormData() {
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("grant_type", "password");
+        map.add("username", "user");
+        map.add("password", "password");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        return new HttpEntity<>(map, headers);
+    }
+
+    private OAuth2RestTemplate restTemplate() {
+
+        ResourceOwnerPasswordResourceDetails resourceDetails = new ResourceOwnerPasswordResourceDetails();
+        resourceDetails.setGrantType("password");
+        resourceDetails.setAccessTokenUri(covertToAbsulateUri(OAUTH_END_POINT));
+
+        //-- set the clients info
+        resourceDetails.setClientId("lzheng-client");
+        resourceDetails.setClientSecret("lzheng-secret");
+
+        // set scopes
+        List<String> scopes = new ArrayList<>();
+        scopes.add("read");
+        scopes.add("write");
+        scopes.add("trust");
+        resourceDetails.setScope(scopes);
+
+        resourceDetails.setUsername("user");
+        resourceDetails.setPassword("password");
+
+        return new OAuth2RestTemplate(resourceDetails);
+    }
 
 }
 

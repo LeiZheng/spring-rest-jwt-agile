@@ -70,4 +70,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         converter.setSigningKey(signingKey);
         return converter;
     }
+
+
 }
