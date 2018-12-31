@@ -1,3 +1,7 @@
+/**
+ * The test case used general resttemplate to call api and compare the response.
+ * the whole test is running with an actual tomcat server.
+ */
 package org.lz.boilerplate.springrest;
 
 import org.junit.Assert;
@@ -19,7 +23,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DemoRestApiTests {
+public class DemoAuthTests {
 
     public static final String API_DEMO_HELLO = "/api/demo/hello";
     public static final String HELLO_API_EXPECTED = "helloworld";
